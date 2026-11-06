@@ -9,10 +9,16 @@ public class PlayerController : MonoBehaviour
     public GameObject winTextObject;
 
     private Rigidbody rb;
+    private AudioSource audioSource;
     private int count;
     private float movementX;
     private float movementY;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -51,6 +57,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
+            collision.gameObject.GetComponent<AudioSource>().Play();
             // Destroy the current object
             Destroy(gameObject);
             // Update the winText to display "You Lose!"
@@ -63,6 +70,7 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Pickup"))
         {
             other.gameObject.SetActive(false);
+            audioSource.Play();
             count = count + 1;
 
             SetCountText();
