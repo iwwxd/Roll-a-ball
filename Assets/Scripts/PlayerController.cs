@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
@@ -13,12 +14,14 @@ public class PlayerController : MonoBehaviour
     private int count;
     private float movementX;
     private float movementY;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    public ParticleSystem winCelebration;
 
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
     }
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -27,8 +30,6 @@ public class PlayerController : MonoBehaviour
         winTextObject.SetActive(false);
     }
 
-
-   
     void OnMove(InputValue movementValue)
     {
         Vector2 movementVector = movementValue.Get<Vector2>();
@@ -39,9 +40,14 @@ public class PlayerController : MonoBehaviour
     void SetCountText()
     {
         countText.text = "Count: " + count.ToString();
+
         if (count >= 10)
         {
             winTextObject.SetActive(true);
+            winCelebration.Play();
+
+            Debug.Log("WIN PARTICLE ACTIVATED!");
+
             Destroy(GameObject.FindGameObjectWithTag("Enemy"));
         }
     }
@@ -52,19 +58,19 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(movement * speed);
     }
 
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
             collision.gameObject.GetComponent<AudioSource>().Play();
-            // Destroy the current object
+
             Destroy(gameObject);
-            // Update the winText to display "You Lose!"
+
             winTextObject.gameObject.SetActive(true);
             winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
         }
     }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Pickup"))
@@ -75,6 +81,5 @@ public class PlayerController : MonoBehaviour
 
             SetCountText();
         }
-        
     }
 }
